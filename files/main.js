@@ -2218,44 +2218,47 @@ function removeFromCartAll(e){
 
 // Корзина
 function ajaxnewqty(){
-  $('.cartqty').change(function(){
-    s = $(this);
-    id = $(this).closest('tr').data('id');
-    qty = $(this).val();
-    if(qty < 1) {
-      s.val(1)
-    }    
-    data = $('.cartForm').serializeArray();
-    data.push({name: 'only_body', value: 1});
-    $('tr[data-id="' + id + '"] .ajaxtotal').css('opacity','0');
-    $('.TotalSum').css('opacity','0');
-    $.ajax({
-      data: data,
-      cache:false,
-      success:function(d){        
-        s.val($(d).find('tr[data-id="' + id + '"] .cartqty').val())
-        $('tr[data-id="' + id + '"] .ajaxtotal').css('opacity','1');
-        $('.TotalSum').css('opacity','1');
-        tr = $('tr[data-id="' + id + '"]');
-        tr.find('.ajaxtotal').html($(d).find('tr[data-id="' + id + '"] .ajaxtotal').html()); 
-        $('.TotalSum').html($(d).find('.TotalSum').html());
-        $('.discounttr').each(function(){
-          $(this).remove();
-        });
-        $(d).find('.discounttr').each(function(){
-          $('.cartTable tfoot tr:first-child').before($(this));
-        });
-        c = $(d).find('tr[data-id="' + id + '"] .cartqty');
-        qw = c.val();
-        if(qty > qw){
-          $('.cartErr').remove();
-          $('.cartTable').before('<div class="cartErr warning">Вы пытаетесь положить в корзину товара больше, чем есть в наличии</div>');
-          $('.cartErr').fadeIn(500).delay(2500).fadeOut(500, function(){$('.cartErr').remove();});
-          $('.cartqty').removeAttr('readonly');
+  $('.cartqty').change(
+  $.debounce(300,
+    function(){
+      s = $(this);
+      id = $(this).closest('tr').data('id');
+      qty = $(this).val();
+      if(qty < 1) {
+        s.val(1)
+      }    
+      data = $('.cartForm').serializeArray();
+      data.push({name: 'only_body', value: 1});
+      $('tr[data-id="' + id + '"] .ajaxtotal').css('opacity','0');
+      $('.TotalSum').css('opacity','0');
+      $.ajax({
+        data: data,
+        cache:false,
+        success:function(d){        
+          s.val($(d).find('tr[data-id="' + id + '"] .cartqty').val())
+          $('tr[data-id="' + id + '"] .ajaxtotal').css('opacity','1');
+          $('.TotalSum').css('opacity','1');
+          tr = $('tr[data-id="' + id + '"]');
+          tr.find('.ajaxtotal').html($(d).find('tr[data-id="' + id + '"] .ajaxtotal').html()); 
+          $('.TotalSum').html($(d).find('.TotalSum').html());
+          $('.discounttr').each(function(){
+            $(this).remove();
+          });
+          $(d).find('.discounttr').each(function(){
+            $('.cartTable tfoot tr:first-child').before($(this));
+          });
+          c = $(d).find('tr[data-id="' + id + '"] .cartqty');
+          qw = c.val();
+          if(Number(qty) > Number(qw)){
+            $('.cartErr').remove();
+            $('.cartTable').before('<div class="cartErr warning">Вы пытаетесь положить в корзину товара больше, чем есть в наличии</div>');
+            $('.cartErr').fadeIn(500).delay(2500).fadeOut(500, function(){$('.cartErr').remove();});
+            $('.cartqty').removeAttr('readonly');
+          }
         }
-      }
+      })
     })
-  })
+  )
 }
 
 // Удаление товара из корзины
