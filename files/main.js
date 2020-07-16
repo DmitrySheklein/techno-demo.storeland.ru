@@ -2224,6 +2224,7 @@ function ajaxnewqty(){
       s = $(this);
       id = $(this).closest('tr').data('id');
       qty = $(this).val();
+      dontPutMore = $(this).data('dont-put-more');
       if(qty < 1) {
         s.val(1)
       }    
@@ -2249,7 +2250,7 @@ function ajaxnewqty(){
           });
           c = $(d).find('tr[data-id="' + id + '"] .cartqty');
           qw = c.val();
-          if(Number(qty) > Number(qw)){
+          if(Number(qty) > Number(qw) && dontPutMore){
             $('.cartErr').remove();
             $('.cartTable').before('<div class="cartErr warning">Вы пытаетесь положить в корзину товара больше, чем есть в наличии</div>');
             $('.cartErr').fadeIn(500).delay(2500).fadeOut(500, function(){$('.cartErr').remove();});
