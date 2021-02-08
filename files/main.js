@@ -2275,6 +2275,7 @@ function ajaxdelete(s){
       success:function(d){
         $('.cart-info').html($(d).find('.cart-info').html());
         ajaxnewqty();
+        quantity();
         $('.cartqty').first().trigger('change');
         $('#startOrder').on('click', function() {
           startOrder();
